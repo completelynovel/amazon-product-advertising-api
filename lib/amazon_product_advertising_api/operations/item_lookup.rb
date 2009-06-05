@@ -20,7 +20,7 @@ module AmazonProductAdvertisingApi
       end
       
       def run
-        self.request.run(self.request_parameters)
+        self.request.run(request_parameters)
       end
       
       private
