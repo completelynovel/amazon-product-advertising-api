@@ -29,8 +29,8 @@ module AmazonProductAdvertisingApi
     
     def run(params)
       url = ([SERVICE_URLS[self.region], "AWSAccessKeyId=#{AmazonProductAdvertisingApi::Base.api_key}", "Operation=#{self.operation}"] + params.collect { |var, val| "#{var.to_s.camelize}=#{val.to_s}" }).join("&")
-      url = URI.parse(url)
-
+      url = URI.parse(URI.escape(url))
+      
       result = Net::HTTP::get_response(url)
       raise("Error connecting to Amazon") if !result.kind_of?(Net::HTTPSuccess)
       
