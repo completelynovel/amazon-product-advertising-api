@@ -41,8 +41,22 @@ module AmazonProductAdvertisingApi
       # Now parse the xml and build out the reponse elements
       self.hpricot_data.at(:Items).search(:Item).each do |element|
         item = AmazonProductAdvertisingApi::Item.new
-        element.containers.each do |container|
-          item.add_element(container.name, container.inner_html)
+        
+        queue = []
+        queue << [item, element.containers]
+        
+        queue.each do |pair|
+          current_item       = pair[0]
+          current_containers = pair[1]
+          
+          current_containers.each do |container|
+            if container.containers.size == 0
+              current_item.add_element(container.name, container.inner_html)
+            else
+              new_item = current_item.add_element(container.name, AmazonProductAdvertisingApi::Item.new)
+              queue << [new_item, container.containers]
+            end
+          end
         end
         self.response.items << item
       end
