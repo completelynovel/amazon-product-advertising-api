@@ -52,7 +52,7 @@ module AmazonProductAdvertisingApi
         self.instance_eval("self.#{name} = self.class.new")
       elsif !value.nil?
         value = value.to_s if value.is_a?(Symbol)
-        value = "'#{value}'" if value.is_a?(String)
+        value = "\"#{value}\"" if value.is_a?(String)
         self.instance_eval("self.#{name} = #{value}")
       end
       
