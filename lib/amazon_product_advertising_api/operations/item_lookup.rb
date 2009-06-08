@@ -13,7 +13,8 @@ module AmazonProductAdvertisingApi
       
       attr_accessor :request
       
-      def initialize(item_id = nil, region = :uk)
+      def initialize(item_id, region = :uk)
+        self.item_id           = item_id
         self.request           = AmazonProductAdvertisingApi::Request.new
         self.request.operation = "ItemLookup"
         self.request.region    = region
@@ -21,6 +22,10 @@ module AmazonProductAdvertisingApi
       
       def run
         self.request.run(request_parameters)
+      end
+      
+      def response
+        self.request.response
       end
       
       private
