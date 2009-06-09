@@ -1,7 +1,17 @@
 module AmazonProductAdvertisingApi
   
-  module ContainsElements
+  class Response
+    
+    attr_accessor :items
+    
+    def initialize
+      @items  = []
+    end
+    
+  end
 
+  class Element
+    
     def add_element(name, value = nil)
       name = name.underscore
       
@@ -22,28 +32,6 @@ module AmazonProductAdvertisingApi
       # Return the element
       self.instance_eval("self.#{name}")
     end
-    
-  end
-  
-  class Response
-    
-    attr_accessor :items
-    
-    def initialize
-      @items  = []
-    end
-    
-  end
-
-  class Item
-    
-    include AmazonProductAdvertisingApi::ContainsElements
-    
-  end
-  
-  class Container
-    
-    include AmazonProductAdvertisingApi::ContainsElements
     
   end
   
