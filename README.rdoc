@@ -1,0 +1,74 @@
+= amazon-product-advertising-api
+
+== Introduction
+A nice rubyish interface to the Amazon Product Advertising API, formerly
+known as the Associates Web Service and before that the Amazon E-Commerce
+Service.
+
+The basic design philosphy is the 'Principle of least surprise', so it's:
+- a dsl that should feel familiar to ruby folk.
+- structured generally like the API.
+
+== Overview
+As mentioned before, the idea behind this is to model the API as closely as
+possible. This means that once you're familiar with this library and the API,
+you'll find this an easy way to navigate around it. You should then be able to
+just refer to the appendices for all you need to know.
+
+You initiate requests by instantiating classes representing api Operations and
+named the same way, i.e. ItemSearch, ItemLookup, etc. The request parameters
+are represented by attributes on those objects and can be manipulated as you
+wish.
+
+Once setup, you call 'run' on the operation which will send the request and
+return a response object (and after that also available as operation.response).
+
+The response has a bit less structure than the request operations. There is no
+representation for Response Groups as there is no clear pattern for how returned
+XML is structured (at least not without going down the route trying to define
+custom handling for each of them). So, instead we just go on the knowledge that
+there'll be one or more "item" tags within an "items" tag and each item will
+contain several tags that represent response elements.
+
+So based on that, a response object has an attribute of items which contains
+instances of Item, which will have attributes defined to represent the
+elements. Where an element is a container, it will be an instance of
+Container which again has attributes defined to represent it's elements, which
+again can be containers and so on and so on.
+
+== Things to know
+- Amazon uses a lot of Camel case in their XML, but to suit Ruby / Rails
+  conventions attributes, etc are converted to underscore style.
+- Most operations have API defined defaults, so where possible I defer to them
+  and so as a rule anything that is required for an Operation will require it
+  to be specified by initialize, and defaults will be defined at that point.
+
+== Having problems?
+Any operation you perform will have the request object as an attribute, and the
+xml and parsed Hpricot data will be available for any direct inspection you may
+want to do. See the example for details.
+
+== Test coverage
+There aren't any tests at the moment but I'll try to add some. There isn't
+really all that much to test though as it's all largely just making http
+requests, parsing the data and building that into nice data structures.
+
+
+= TODO
+- Implement the rest of the Operations
+- Add affiliate code to requests (region aware).
+- Clean handling of routine errors such as rate limiting, etc.
+- Implement HMAC before the authentication requirement kicks in in August 2009.
+- Implement batch and multiple operation requests, abstracted away from the
+  user within the dsl.
+- Some sort of internal caching mechanism.
+
+
+= Credits
+Created by Jon Gilbraith, jon@completelynovel.com, while working with
+CompletelyNovel.
+
+Contents of support.rb are basically taken and adapted from Rails'
+ActiveSupport.
+
+==

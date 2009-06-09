@@ -1,0 +1,74 @@
+require 'rubygems'
+require 'amazon_product_advertising_api'
+# Setup your API key - in an initializer or something like that
+AmazonProductAdvertisingApi::Base.api_key = "<insert api key here>"
+
+lookup = AmazonProductAdvertisingApi::Operations::ItemLookup.new("0201485419")
+lookup.run
+
+# Returned XML, tidied
+# <?xml version="1.0"?>
+# <ItemLookupResponse xmlns="http://webservices.amazon.com/AWSECommerceService/2005-10-05">
+#   <OperationRequest>
+#     <RequestId>d6c19392-7710-4b05-ad9c-1637755170d8</RequestId>
+#     <Arguments>
+#       <Argument Name="Operation" Value="ItemLookup"/>
+#       <Argument Name="Service" Value="AWSECommerceService"/>
+#       <Argument Name="ItemId" Value="0201485419"/>
+#       <Argument Name="AWSAccessKeyId" Value="09ADJH6KCGVSRF7PREG2"/>
+#     </Arguments>
+#     <RequestProcessingTime>0.0376290000000000</RequestProcessingTime>
+#   </OperationRequest>
+#   <Items>
+#     <Request>
+#       <IsValid>True</IsValid>
+#       <ItemLookupRequest>
+#         <Condition>New</Condition>
+#         <DeliveryMethod>Ship</DeliveryMethod>
+#         <IdType>ASIN</IdType>
+#         <MerchantId>Amazon</MerchantId>
+#         <OfferPage>1</OfferPage>
+#         <ItemId>0201485419</ItemId>
+#         <ResponseGroup>Small</ResponseGroup>
+#         <ReviewPage>1</ReviewPage>
+#       </ItemLookupRequest>
+#     </Request>
+#     <Item>
+#       <ASIN>0201485419</ASIN>
+#       <DetailPageURL>http://www.amazon.co.uk/Art-Computer-Programming-Information-Processing/dp/0201485419%3FSubscriptionId%3D09ADJH6KCGVSRF7PREG2%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0201485419</DetailPageURL>
+#       <ItemAttributes>git 
+#         <Author>Donald E. Knuth</Author>
+#         <Manufacturer>Addison Wesley</Manufacturer>
+#         <ProductGroup>Book</ProductGroup>
+#         <Title>The Art of Computer Programming: v. 1-3: Vol 1-3 (Series in Computer Science &amp; Information Processing)</Title>
+#       </ItemAttributes>
+#     </Item>
+#   </Items>
+# </ItemLookupResponse>
+
+lookup.response.items.size
+=> 1
+
+lookup.response.items.first
+=> #<AmazonProductAdvertisingApi::Item:0x139154c @detail_page_url="http://www.amazon.co.uk/Art-Computer-Programming-Information-Processing/dp/0201485419%3FSubscriptionId%3D09ADJH6KCGVSRF7PREG2%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0201485419", @item_attributes=#<AmazonProductAdvertisingApi::Container:0x1391448 @manufacturer="Addison Wesley", @product_group="Book", @title="The Art of Computer Programming: v. 1-3: Vol 1-3 (Series in Computer Science &amp; Information Processing)", @author="Donald E. Knuth">, @asin="0201485419">
+
+lookup.response.items.first.asin
+=> "0201485419"
+
+# ItemAttributes is a container element, doesn't return a string
+lookup.response.items.first.item_attributes
+=> #<AmazonProductAdvertisingApi::Container:0x1391448 @manufacturer="Addison Wesley", @product_group="Book", @title="The Art of Computer Programming: v. 1-3: Vol 1-3 (Series in Computer Science &amp; Information Processing)", @author="Donald E. Knuth">
+
+lookup.response.items.first.item_attributes.title
+=> "The Art of Computer Programming: v. 1-3: Vol 1-3 (Series in Computer Science &amp; Information Processing)"
+
+lookup.response.items.first.item_attributes.author
+=> "Donald E. Knuth"
+
+# If you need to debug, you can access all the xml data easily
+lookup.request.raw_data
+=> <XML string, straight from the request body>
+
+lookup.request.hpricot_data
+=> <the xml data, having been fed into Hpricot>
+
