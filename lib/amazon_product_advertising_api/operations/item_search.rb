@@ -16,9 +16,10 @@ module AmazonProductAdvertisingApi
       
       attr_accessor :request
       
-      def initialize(keywords, region = :uk)
+      def initialize(keywords, search_index = "Books", region = :uk)
         self.keywords          = keywords
-        self.search_index      = "Books"
+        self.search_index      = search_index
+
         self.request           = AmazonProductAdvertisingApi::Request.new
         self.request.operation = "ItemSearch"
         self.request.region    = region
