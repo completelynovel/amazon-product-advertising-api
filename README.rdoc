@@ -62,6 +62,8 @@ requests, parsing the data and building that into nice data structures.
 - Implement batch and multiple operation requests, abstracted away from the
   user within the dsl.
 - Some sort of internal caching mechanism.
+- Ability to bind to different IP addresses, in order to circumvent API rate
+  limiting.
 
 
 = Credits
