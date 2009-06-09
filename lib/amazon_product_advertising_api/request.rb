@@ -53,7 +53,7 @@ module AmazonProductAdvertisingApi
             if container.containers.size == 0
               current_item.add_element(container.name, container.inner_html)
             else
-              new_item = current_item.add_element(container.name, AmazonProductAdvertisingApi::Item.new)
+              new_item = current_item.add_element(container.name, AmazonProductAdvertisingApi::Container.new)
               queue << [new_item, container.containers]
             end
           end
