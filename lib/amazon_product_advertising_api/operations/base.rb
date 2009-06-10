@@ -56,10 +56,11 @@ module AmazonProductAdvertisingApi
       
       class Response
 
-        attr_accessor :items
+        attr_accessor :items, :browse_nodes
 
         def initialize
-          @items  = []
+          @items        = []
+          @browse_nodes = []
         end
 
       end
