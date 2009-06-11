@@ -99,6 +99,34 @@ module AmazonProductAdvertisingApi
           end
           
       end
+
+      class SimilarityLookup < AmazonProductAdvertisingApi::Operations::Base::Request
+        
+        include Common
+        
+        REQUEST_PARAMETERS = :condition, :item_id, :merchant_id, :similarity_type, :response_group
+      
+        REQUEST_PARAMETERS.each do |param|
+          self.send(:attr_accessor, param)
+        end
+        
+        def initialize(item_id, region = :uk)
+          super()
+          
+          self.item_id   = item_id
+          self.operation = "SimilarityLookup"
+          self.region    = region
+        end
+      
+        private
+          def params
+            REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
+              parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")
+              parameters
+            end
+          end
+          
+      end
       
     end
   end
