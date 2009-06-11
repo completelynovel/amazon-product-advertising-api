@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'amazon_product_advertising_api'
 # Setup your API key - in an initializer or something like that
-AmazonProductAdvertisingApi::Base.api_key = "<insert api key here>"
+AmazonProductAdvertisingApi::Base.access_key_id = "<insert api key here>"
 
 # Setup Associates IDs for whichever regions you're selling to
 AmazonProductAdvertisingApi::Base.associate_ids.uk = "<insert UK Associate ID here>"

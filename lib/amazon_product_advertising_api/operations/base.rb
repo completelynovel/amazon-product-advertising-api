@@ -4,8 +4,6 @@ module AmazonProductAdvertisingApi
       
       class Request
     
-        attr_accessor :aws_access_key_id
-    
         attr_accessor :region
     
         attr_accessor :operation
@@ -33,7 +31,7 @@ module AmazonProductAdvertisingApi
     
         def query_amazon(params)
           request_params = {}
-          request_params["AWSAccessKeyId"] = AmazonProductAdvertisingApi::Base.api_key
+          request_params["AWSAccessKeyId"] = AmazonProductAdvertisingApi::Base.access_key_id
           request_params["Operation"]      = self.operation
           request_params["AssociateTag"]   = AmazonProductAdvertisingApi::Base.associate_ids.send(self.region) unless AmazonProductAdvertisingApi::Base.associate_ids.send(self.region).nil?
           request_params.merge!(params)
