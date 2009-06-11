@@ -19,7 +19,7 @@ lookup.run
 #       <Argument Name="Operation" Value="ItemLookup"/>
 #       <Argument Name="Service" Value="AWSECommerceService"/>
 #       <Argument Name="ItemId" Value="0201485419"/>
-#       <Argument Name="AWSAccessKeyId" Value="09ADJH6KCGVSRF7PREG2"/>
+#       <Argument Name="AWSAccessKeyId" Value="<your api key>"/>
 #     </Arguments>
 #     <RequestProcessingTime>0.0376290000000000</RequestProcessingTime>
 #   </OperationRequest>
@@ -39,7 +39,7 @@ lookup.run
 #     </Request>
 #     <Item>
 #       <ASIN>0201485419</ASIN>
-#       <DetailPageURL>http://www.amazon.co.uk/Art-Computer-Programming-Information-Processing/dp/0201485419%3FSubscriptionId%3D09ADJH6KCGVSRF7PREG2%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0201485419</DetailPageURL>
+#       <DetailPageURL>http://www.amazon.co.uk/Art-Computer-Programming-Information-Processing/dp/0201485419%3FSubscriptionId%3D<your api key>%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0201485419</DetailPageURL>
 #       <ItemAttributes>git 
 #         <Author>Donald E. Knuth</Author>
 #         <Manufacturer>Addison Wesley</Manufacturer>
@@ -54,7 +54,7 @@ lookup.response.items.size
 => 1
 
 lookup.response.items.first
-=> #<AmazonProductAdvertisingApi::Item:0x139154c @detail_page_url="http://www.amazon.co.uk/Art-Computer-Programming-Information-Processing/dp/0201485419%3FSubscriptionId%3D09ADJH6KCGVSRF7PREG2%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0201485419", @item_attributes=#<AmazonProductAdvertisingApi::Container:0x1391448 @manufacturer="Addison Wesley", @product_group="Book", @title="The Art of Computer Programming: v. 1-3: Vol 1-3 (Series in Computer Science &amp; Information Processing)", @author="Donald E. Knuth">, @asin="0201485419">
+=> #<AmazonProductAdvertisingApi::Item:0x139154c @detail_page_url="http://www.amazon.co.uk/Art-Computer-Programming-Information-Processing/dp/0201485419%3FSubscriptionId%3D<your api key>%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0201485419", @item_attributes=#<AmazonProductAdvertisingApi::Container:0x1391448 @manufacturer="Addison Wesley", @product_group="Book", @title="The Art of Computer Programming: v. 1-3: Vol 1-3 (Series in Computer Science &amp; Information Processing)", @author="Donald E. Knuth">, @asin="0201485419">
 
 lookup.response.items.first.asin
 => "0201485419"
