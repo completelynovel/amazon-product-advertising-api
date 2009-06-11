@@ -16,19 +16,19 @@ module AmazonProductAdvertisingApi
             
             queue.each do |pair|
               current_element    = pair[0]
-              current_containers = pair[1]
+              current_children = pair[1]
           
-              current_containers.each do |container|
-                if container.containers.size == 0
-                  current_element.add_element(container.name, container.inner_html)
+              current_children.each do |child|
+                if child.containers.size == 0
+                  current_element.add_element(child.name, child.inner_html)
                 else
-                  if container.parent.name == container.name + "s" || container.parent.search("> #{container.name}").size > 1
+                  if parent_a_container?(child)
                      new_element = AmazonProductAdvertisingApi::Operations::Base::Element.new
                     current_element << new_element
-                    queue           << [new_element, container.containers]
+                    queue           << [new_element, child.containers]
                   else
-                    new_element = current_element.add_element(container.name, AmazonProductAdvertisingApi::Operations::Base::Element.new)
-                    queue << [new_element, container.containers]
+                    new_element = current_element.add_element(child.name, AmazonProductAdvertisingApi::Operations::Base::Element.new)
+                    queue << [new_element, child.containers]
                   end
                 end
               end

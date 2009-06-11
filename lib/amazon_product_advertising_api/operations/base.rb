@@ -52,6 +52,17 @@ module AmazonProductAdvertisingApi
           self.query_amazon(params)
         end
         
+        private
+          # When passed an hpricot element it returns true or false based on whether this item is thought to be inside a Container Element.
+          # It does this in the rather crude way of seeing if the parent's name is the pluralized form of it's own, or it is one of
+          # several with the same name. This isn't 100% fool proof so I think at some point using a definitive list of the container elements
+          # would be a better way to go.
+          #
+          # The pluralisation could also do with something a bit more sophisticated.
+          def parent_a_container?(hpricot_element)
+            hpricot_element.parent.name == hpricot_element.name + "s" || hpricot_element.parent.search("> #{hpricot_element.name}").size > 1
+          end
+        
       end
       
       class Element
