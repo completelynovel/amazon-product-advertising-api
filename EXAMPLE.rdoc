@@ -3,7 +3,7 @@ require 'amazon_product_advertising_api'
 # Setup your API key - in an initializer or something like that
 AmazonProductAdvertisingApi::Base.api_key = "<insert api key here>"
 
-lookup = AmazonProductAdvertisingApi::Operations::ItemLookup.new("0201485419")
+lookup = AmazonProductAdvertisingApi::Operations::Item::ItemLookup.new("0201485419")
 lookup.run
 
 # Returned XML, tidied
@@ -66,9 +66,9 @@ lookup.response.items.first.item_attributes.author
 => "Donald E. Knuth"
 
 # If you need to debug, you can access all the xml data easily
-lookup.request.raw_data
+lookup.raw_data
 => <XML string, straight from the request body>
 
-lookup.request.hpricot_data
+lookup.hpricot_data
 => <the xml data, having been fed into Hpricot>
 
