@@ -15,6 +15,10 @@ module AmazonProductAdvertisingApi
         attr_accessor :hpricot_data
     
         attr_accessor :response
+        
+        attr_accessor :is_valid
+        
+        attr_accessor :errors
     
         SERVICE_URLS = {
             :us => 'http://ecs.amazonaws.com/onca/xml?Service=AWSECommerceService',
@@ -27,6 +31,7 @@ module AmazonProductAdvertisingApi
     
         def initialize
           self.response = AmazonProductAdvertisingApi::Operations::Base::Element.new
+          self.errors   = []
         end
     
         def query_amazon(params)
@@ -47,7 +52,19 @@ module AmazonProductAdvertisingApi
           self.hpricot_data = Hpricot.XML(self.raw_data)
       
           # Now parse the xml and build out the reponse elements
+          self.is_valid = self.hpricot_data.at(:IsValid).inner_html == "True"
+          
           self.parse
+          
+          # is_valid only refers to the request, so we could still have errors - check and parse if present
+          if !self.hpricot_data.at(:Errors).nil?
+            self.hpricot_data.at(:Errors).search(:Error).each do |error|
+              self.errors << Struct.new(:code, :message).new(error.at(:Code).inner_html, error.at(:Message).inner_html)
+            end
+          end
+          
+          # Return false if it's not a valid request, otherwise return the response
+          self.is_valid ? self.response : false
         end
         
         def parse

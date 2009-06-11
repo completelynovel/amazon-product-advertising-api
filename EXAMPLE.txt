@@ -1,3 +1,6 @@
+Basic usage
+###########
+
 require 'rubygems'
 require 'amazon_product_advertising_api'
 # Setup your API key - in an initializer or something like that
@@ -50,6 +53,10 @@ lookup.run
 #   </Items>
 # </ItemLookupResponse>
 
+# is_valid is part of the api and says whether the request was valid
+lookup.is_valid
+=> true
+
 lookup.response.items.size
 => 1
 
@@ -77,5 +84,43 @@ lookup.hpricot_data
 => <the xml data, having been fed into Hpricot>
 
 # And also the request uri
-irb(main):022:0> lookup.request_uri
+lookup.request_uri
 => #<URI::HTTP:0x1c7021c URL:http://ecs.amazonaws.co.uk/onca/xml?Service=AWSECommerceService&Operation=ItemLookup&ItemId=0201485419&AWSAccessKeyId=%3Cinsert%20api%20key%20here%3E>
+
+
+Error handling - invalid request credentials, url form, etc
+###########################################################
+AmazonProductAdvertisingApi::Base.access_key_id = "<an invalid id>"
+lookup = AmazonProductAdvertisingApi::Operations::Item::ItemLookup.new("0201485419")
+lookup.run
+=> false
+
+lookup.is_valid
+=> false
+
+lookup.errors
+=> <an array of error objects>
+
+lookup.errors.first.code
+=> AWS.InvalidParameterValue
+
+lookup.errors.first.message
+=> <an invalid id> is not a valid value for AWSAccessKeyId. Please change this value and retry your request.
+
+
+Error handling - invalid request credentials, url form, etc
+###########################################################
+AmazonProductAdvertisingApi::Base.access_key_id = "<valid api key>"
+lookup = AmazonProductAdvertisingApi::Operations::Item::ItemLookup.new("<invalid asin>")
+lookup.run
+=> false
+
+# is_valid returns true as the request was well formed, it just doesn't have any valid data to return
+lookup.is_valid
+=> true
+
+lookup.errors.first.code
+=> AWS.InvalidParameterValue
+
+lookup.errors.first.message
+=> <an invalid asin> is not a valid value for ItemId. Please change this value and retry your request.
