@@ -5,57 +5,78 @@ A nice rubyish interface to the Amazon Product Advertising API, formerly
 known as the Associates Web Service and before that the Amazon E-Commerce
 Service.
 
-The basic design philosphy is the 'Principle of least surprise', so it's:
+The basic design philosophy is the 'Principle of least surprise', so it's:
 - a dsl that should feel familiar to ruby folk.
 - structured generally like the API.
 
+== Prerequisites
+It's assumed you're reasonably familiar with Ruby as a language, and the
+typical coding patterns and styles employed by the community.
+
+It's also assumed that you're familiar with the API. If not go RTFM for a bit,
+it's all pretty straight forward.
+
 == Overview
-As mentioned before, the idea behind this is to model the API as closely as
-possible. This means that once you're familiar with this library and the API,
-you'll find this an easy way to navigate around it. You should then be able to
-just refer to the appendices for all you need to know.
+As mentioned before, the idea behind this is to model the API so that once
+you're familiar with this library and the API, you'll find this an easy way to
+navigate around it. You should then be able to just refer to the lists of
+Operations, Response Groups and Response Elements in the appendices for all
+you need to know.
 
 You initiate requests by instantiating classes representing api Operations and
 named the same way, i.e. ItemSearch, ItemLookup, etc. The request parameters
 are represented by attributes on those objects and can be manipulated as you
-wish.
+wish.  If a parameter is required it'll be required or defaulted on
+initialization, but everywhere else we defer to the defaults provided by the
+api.
 
 Once setup, you call 'run' on the operation which will send the request and
 return a response object (and after that also available as operation.response).
 
 The response has a bit less structure than the request operations. There is no
-representation for Response Groups as there is no clear pattern for how returned
-XML is structured (at least not without going down the route trying to define
-custom handling for each of them). So, instead we just go on the knowledge that
-there'll be one or more "item" tags within an "items" tag and each item will
-contain several tags that represent response elements.
+representation for Response Groups as beyond one level deep there is no clear
+pattern for how returned XML is structured (at least not without going down the
+route trying to define custom handling for each of them). So, instead we group
+the Operations into broad groups which return the same collections of data.
+ItemSearch, ItemLookup and SimilarityLookup all return a Items container
+element with one or more Item tag in it, etc.
 
-So based on that, a response object has an attribute of items which contains
-instances of Item, which will have attributes defined to represent the
-elements. Where an element is a container, it will be an instance of
-Container which again has attributes defined to represent it's elements, which
-again can be containers and so on and so on.
+Everything beyond one level deep is done with a recursive sweep instantiating
+Element objects as we go.
 
 == Things to know
 - Amazon uses a lot of Camel case in their XML, but to suit Ruby / Rails
   conventions attributes, etc are converted to underscore style.
-- Most operations have API defined defaults, so where possible I defer to them
-  and so as a rule anything that is required for an Operation will require it
-  to be specified by initialize, and defaults will be defined at that point.
-
+- One gotcha - Response Elements can either be a simple value or a container
+  with more elements inside. We recognise this situation by simply comparing
+  the parent and child names (plural parent, singular child) though that isn't
+  always the pattern so we also look for multiple children of the same name.
+  
+  That means that some situations might creep through and not work as expected.
+  If the parent and child don't follow the same naming convention and there is
+  also only one child element you'd find the child would be defined as
+  parent.child rather than parent.children.first.
+  
+  This is a bug and will have to be addressed (probably by making a list of
+  container elements to check against).
+  
 == Having problems?
-Any operation you perform will have the request object as an attribute, and the
-xml and parsed Hpricot data will be available for any direct inspection you may
-want to do. See the example for details.
+After running the operation's raw xml and hpricot data will be available in
+operation.raw_data and operation.hpricot_data which should tell you all you
+need to know about the response.
 
 == Test coverage
-There aren't any tests at the moment but I'll try to add some. There isn't
-really all that much to test though as it's all largely just making http
-requests, parsing the data and building that into nice data structures.
+There aren't any tests at the moment but I'll try to add some.
+
+For the most part there isn't really all that much to test though as it's all
+largely just making http requests, however the XML parsing is quite convoluted
+so some tests would be good there to make sure the parsing is following the
+intended rules.
 
 
 = TODO
-- Implement the rest of the Operations
+- Implement the rest of the Operations (Cart*, Customer*, Help, List*, Seller*,
+  Tag*, Transaction* and Vehicle*).
 - Add affiliate code to requests (region aware).
 - Clean handling of routine errors such as rate limiting, etc.
 - Implement HMAC before the authentication requirement kicks in in August 2009.
@@ -72,5 +93,3 @@ CompletelyNovel.
 
 Contents of support.rb are basically taken and adapted from Rails'
 ActiveSupport.
-
-==
