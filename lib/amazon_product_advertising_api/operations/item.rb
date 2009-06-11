@@ -5,26 +5,34 @@ module AmazonProductAdvertisingApi
       module Common
         
         def parse
-          self.hpricot_data.at(:Items).search(:Item).each do |element|
-            item = AmazonProductAdvertisingApi::Operations::Base::Element.new
-        
+          self.response.add_element("Items", AmazonProductAdvertisingApi::Operations::Base::Element.new)
+
+          (self.hpricot_data/'Items > Item').each do |element|
+            new_element = AmazonProductAdvertisingApi::Operations::Base::Element.new
+            self.response.items << new_element
+
             queue = []
-            queue << [item, element.containers]
-        
+            queue << [new_element, element.containers]
+            
             queue.each do |pair|
-              current_item       = pair[0]
+              current_element    = pair[0]
               current_containers = pair[1]
           
               current_containers.each do |container|
                 if container.containers.size == 0
-                  current_item.add_element(container.name, container.inner_html)
+                  current_element.add_element(container.name, container.inner_html)
                 else
-                  new_item = current_item.add_element(container.name, AmazonProductAdvertisingApi::Operations::Base::Element.new)
-                  queue << [new_item, container.containers]
+                  if container.parent.name == container.name + "s" || container.parent.search("> #{container.name}").size > 1
+                     new_element = AmazonProductAdvertisingApi::Operations::Base::Element.new
+                    current_element << new_element
+                    queue           << [new_element, container.containers]
+                  else
+                    new_element = current_element.add_element(container.name, AmazonProductAdvertisingApi::Operations::Base::Element.new)
+                    queue << [new_element, container.containers]
+                  end
                 end
               end
             end
-            self.response.items << item
           end
         end
         

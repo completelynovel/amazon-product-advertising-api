@@ -26,7 +26,7 @@ module AmazonProductAdvertisingApi
         }
     
         def initialize
-          self.response = Response.new
+          self.response = AmazonProductAdvertisingApi::Operations::Base::Element.new
         end
     
         def query_amazon(params)
@@ -54,19 +54,14 @@ module AmazonProductAdvertisingApi
         
       end
       
-      class Response
-
-        attr_accessor :items, :browse_nodes
-
-        def initialize
-          @items        = []
-          @browse_nodes = []
-        end
-
-      end
-
       class Element
-
+        
+        include Enumerable
+        
+        def initialize
+          @contained_elements = []
+        end
+        
         def add_element(name, value = nil)
           name = name.underscore
 
@@ -87,7 +82,29 @@ module AmazonProductAdvertisingApi
           # Return the element
           self.instance_eval("self.#{name}")
         end
-
+        
+        def << element
+          @contained_elements << element
+        end
+        
+        def each(&block)
+          @contained_elements.each do |element|
+            yield element
+          end
+        end
+        
+        def [] position
+          @contained_elements[position]
+        end
+        
+        def first
+          @contained_elements.first
+        end
+        
+        def size
+          @contained_elements.size
+        end
+        
       end
     
     end

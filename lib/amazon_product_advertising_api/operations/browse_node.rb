@@ -19,26 +19,34 @@ module AmazonProductAdvertisingApi
         end
         
         def parse
+          self.response.add_element("BrowseNodes", AmazonProductAdvertisingApi::Operations::Base::Element.new)
+
           (self.hpricot_data/'BrowseNodes > BrowseNode').each do |element|
-            browse_node = AmazonProductAdvertisingApi::Operations::Base::Element.new
-        
+            new_element = AmazonProductAdvertisingApi::Operations::Base::Element.new
+            self.response.browse_nodes << new_element
+
             queue = []
-            queue << [browse_node, element.containers]
-        
+            queue << [new_element, element.containers]
+            
             queue.each do |pair|
-              current_browse_node = pair[0]
-              current_containers  = pair[1]
+              current_element    = pair[0]
+              current_containers = pair[1]
           
               current_containers.each do |container|
                 if container.containers.size == 0
-                  current_browse_node.add_element(container.name, container.inner_html)
+                  current_element.add_element(container.name, container.inner_html)
                 else
-                  new_browse_node = current_browse_node.add_element(container.name, AmazonProductAdvertisingApi::Operations::Base::Element.new)
-                  queue << [new_browse_node, container.containers]
+                  if container.parent.name == container.name + "s" || container.parent.search("> #{container.name}").size > 1
+                     new_element = AmazonProductAdvertisingApi::Operations::Base::Element.new
+                    current_element << new_element
+                    queue           << [new_element, container.containers]
+                  else
+                    new_element = current_element.add_element(container.name, AmazonProductAdvertisingApi::Operations::Base::Element.new)
+                    queue << [new_element, container.containers]
+                  end
                 end
               end
             end
-            self.response.browse_nodes << browse_node
           end
         end
         
