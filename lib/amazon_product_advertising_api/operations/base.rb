@@ -9,6 +9,8 @@ module AmazonProductAdvertisingApi
         attr_accessor :region
     
         attr_accessor :operation
+        
+        attr_accessor :request_uri
     
         attr_accessor :raw_data
     
@@ -30,10 +32,16 @@ module AmazonProductAdvertisingApi
         end
     
         def query_amazon(params)
-          url = ([SERVICE_URLS[self.region], "AWSAccessKeyId=#{AmazonProductAdvertisingApi::Base.api_key}", "Operation=#{self.operation}"] + params.collect { |var, val| "#{var.to_s.camelize}=#{val.to_s}" }).join("&")
-          url = URI.parse(URI.escape(url))
+          request_params = {}
+          request_params["AWSAccessKeyId"] = AmazonProductAdvertisingApi::Base.api_key
+          request_params["Operation"]      = self.operation
+          request_params["AssociateTag"]   = AmazonProductAdvertisingApi::Base.associate_ids.send(self.region) unless AmazonProductAdvertisingApi::Base.associate_ids.send(self.region).nil?
+          request_params.merge!(params)
+          
+          self.request_uri = "#{SERVICE_URLS[self.region]}&#{request_params.collect { |var, val| var.to_s.camelize + "=" + val.to_s }.join("&")}"
+          self.request_uri = URI.parse(URI.escape(self.request_uri))
       
-          result = Net::HTTP::get_response(url)
+          result = Net::HTTP::get_response(self.request_uri)
           raise("Error connecting to Amazon") if !result.kind_of?(Net::HTTPSuccess)
       
           # Store away the raw data for debugging or if more direct access is required

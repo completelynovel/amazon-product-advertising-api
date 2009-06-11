@@ -3,6 +3,10 @@ require 'amazon_product_advertising_api'
 # Setup your API key - in an initializer or something like that
 AmazonProductAdvertisingApi::Base.api_key = "<insert api key here>"
 
+# Setup Associates IDs for whichever regions you're selling to
+AmazonProductAdvertisingApi::Base.associate_ids.uk = "<insert UK Associate ID here>"
+AmazonProductAdvertisingApi::Base.associate_ids.us = "<insert US Associate ID here>"
+
 lookup = AmazonProductAdvertisingApi::Operations::Item::ItemLookup.new("0201485419")
 lookup.run
 
@@ -72,3 +76,6 @@ lookup.raw_data
 lookup.hpricot_data
 => <the xml data, having been fed into Hpricot>
 
+# And also the request uri
+irb(main):022:0> lookup.request_uri
+=> #<URI::HTTP:0x1c7021c URL:http://ecs.amazonaws.co.uk/onca/xml?Service=AWSECommerceService&Operation=ItemLookup&ItemId=0201485419&AWSAccessKeyId=%3Cinsert%20api%20key%20here%3E>

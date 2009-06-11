@@ -61,9 +61,9 @@ Element objects as we go.
   container elements to check against).
   
 == Having problems?
-After running the operation's raw xml and hpricot data will be available in
-operation.raw_data and operation.hpricot_data which should tell you all you
-need to know about the response.
+After running the request uri, returned raw xml and hpricot data will be
+available in operation.raw_data and operation.hpricot_data which should tell
+you all you need to know about the response.
 
 == Test coverage
 There aren't any tests at the moment but I'll try to add some.
@@ -77,7 +77,6 @@ intended rules.
 = TODO
 - Implement the rest of the Operations (Cart*, Customer*, Help, List*, Seller*,
   Tag*, Transaction* and Vehicle*).
-- Add affiliate code to requests (region aware).
 - Clean handling of routine errors such as rate limiting, etc.
 - Implement HMAC before the authentication requirement kicks in in August 2009.
 - Implement batch and multiple operation requests, abstracted away from the
