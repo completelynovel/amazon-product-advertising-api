@@ -1,9 +1,11 @@
-module AmazonProductAdvertisingApi
-  module Operations
-    module Item
+module AmazonProductAdvertisingApi #:nodoc:
+  module Operations #:nodoc:
+    module Item #:nodoc:
       
+      # Gets mixed into each of the classes in AmazonProductAdvertisingApi::Operations::Item for common behaviours.
       module Common
         
+        # Item methods return xml consisting of an Items tag with several Item tags inside.
         def parse
           self.response.add_element("Items", AmazonProductAdvertisingApi::Operations::Base::Element.new)
 
@@ -38,6 +40,9 @@ module AmazonProductAdvertisingApi
         
       end
       
+      # A class to represent the ItemSearch Operation. See AmazonProductAdvertisingApi::Operations::Base::Request for info relating to all Requests.
+      #
+      # It mixes in AmazonProductAdvertisingApi::Operations::Item::Common for it's parse method.
       class ItemSearch < AmazonProductAdvertisingApi::Operations::Base::Request
         
         include Common
@@ -51,7 +56,8 @@ module AmazonProductAdvertisingApi
         REQUEST_PARAMETERS.each do |param|
           self.send(:attr_accessor, param)
         end
-
+        
+        # ItemSearch requires keywords and a search index to be specified.
         def initialize(keywords, search_index = "Books", region = :uk)
           super()
 
@@ -62,6 +68,8 @@ module AmazonProductAdvertisingApi
         end
       
         private
+          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
+          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
           def params
             REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
               parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")
@@ -71,6 +79,9 @@ module AmazonProductAdvertisingApi
       
       end
       
+      # A class to represent the ItemLookup Operation. See AmazonProductAdvertisingApi::Operations::Base::Request for info relating to all Requests.
+      #
+      # It mixes in AmazonProductAdvertisingApi::Operations::Item::Common for it's parse method.
       class ItemLookup < AmazonProductAdvertisingApi::Operations::Base::Request
         
         include Common
@@ -82,6 +93,7 @@ module AmazonProductAdvertisingApi
           self.send(:attr_accessor, param)
         end
         
+        # ItemLookup only requires an item id (ASIN) to be specified.
         def initialize(item_id, region = :uk)
           super()
           
@@ -91,6 +103,8 @@ module AmazonProductAdvertisingApi
         end
       
         private
+          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
+          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
           def params
             REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
               parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")
@@ -99,7 +113,12 @@ module AmazonProductAdvertisingApi
           end
           
       end
-
+      
+      # A class to represent the SimilarityLookup Operation. See AmazonProductAdvertisingApi::Operations::Base::Request for info relating to all Requests.
+      #
+      # Despite not following the same naming convention of other classes in this module, it returns data structured the same way so has been put here.
+      #
+      # It mixes in AmazonProductAdvertisingApi::Operations::Item::Common for it's parse method.
       class SimilarityLookup < AmazonProductAdvertisingApi::Operations::Base::Request
         
         include Common
@@ -110,6 +129,7 @@ module AmazonProductAdvertisingApi
           self.send(:attr_accessor, param)
         end
         
+        # SimilarityLookup only requires an item id (ASIN) to be specified.
         def initialize(item_id, region = :uk)
           super()
           
@@ -119,6 +139,8 @@ module AmazonProductAdvertisingApi
         end
       
         private
+          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
+          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
           def params
             REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
               parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")

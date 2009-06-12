@@ -1,23 +1,43 @@
-module AmazonProductAdvertisingApi
-  module Operations
-    module Base
+module AmazonProductAdvertisingApi #:nodoc:
+  module Operations #:nodoc:
+    module Base #:nodoc:
       
+      # This is the parent class of any Operations performed.
+      #
+      # Each class should have a constant defined called REQUEST_PARAMETERS which contains the available parameters
+      # as defined in the API docs.  Each class should also override the parse method with a custom version to suit the
+      # particular pattern of XML returned for it.
+      #
+      # Subclasses should also override initialize to take any parameters the API defines as required, and follow the pattern
+      # of the region being the last parameter.
+      #
+      # Before doing that though it should call super back to this one.
       class Request
-    
+        
+        # String - Amazon API calls can be sent to any of 6 regions, so this defines which one.
+        # It'll also use this data to pick the right Associates key to use.
         attr_accessor :region
-    
+        
+        # String - The name of the Operation you want to perform, i.e. ItemSearch, ItemLookup, etc.
         attr_accessor :operation
         
+        # String - This stores the request that gets sent to Amazon (for investigation if you want to look under the covers).
         attr_accessor :request_uri
-    
+        
+        # String - This stores the raw data of the request response (again, for investigation if you want to look under the covers).
         attr_accessor :raw_data
-    
+        
+        # Hpricot - This stores the raw data of the request response should you feel the need / desire to do some parsing yourself.
         attr_accessor :hpricot_data
-    
+        
+        # Element - This is the root of the structure that the lib assembles from the data when parsed.
         attr_accessor :response
         
+        # Boolean - All responses have a field saying whether the request was valid. Note that this refers to the format of the request, etc
+        # and not errors with the request parameters, etc. I.e. a lookup for an item that doesn't exsist is still valid.
         attr_accessor :is_valid
         
+        # Array of Struct - Any errors will be added to this attribute and each has an attribute of code or message.
         attr_accessor :errors
     
         SERVICE_URLS = {
@@ -33,7 +53,8 @@ module AmazonProductAdvertisingApi
           self.response = AmazonProductAdvertisingApi::Operations::Base::Element.new
           self.errors   = []
         end
-    
+        
+        # This takes care of building request, performing it, storing the results, checking for errors then parsing the data (if the request was valid).
         def query_amazon(params)
           request_params = {}
           request_params["AWSAccessKeyId"] = AmazonProductAdvertisingApi::Base.access_key_id
@@ -67,10 +88,12 @@ module AmazonProductAdvertisingApi
           self.is_valid ? self.response : false
         end
         
+        # The parse method of a request should be overwritted by any subclasses to account for different patterns in the XML.
         def parse
           raise "This should be being overridden by it's subclass to provide custom parsing for the particular operation concerned."
         end
         
+        # Launches the request's query to Amazon (via query_amazon).
         def run
           self.query_amazon(params)
         end
@@ -88,6 +111,12 @@ module AmazonProductAdvertisingApi
         
       end
       
+      # XML data that is returned by Amazon gets built into a tree of nodes, which are made up of instances of this class.
+      # They represent the 'response element' entity within the API docs.
+      #
+      # As well as various having attributes it can also contain a collection and behave like an array.
+      #
+      # I think I might have got a bit confused with all this, will come back to this shortly to check.
       class Element
         
         include Enumerable
@@ -96,6 +125,7 @@ module AmazonProductAdvertisingApi
           @contained_elements = []
         end
         
+        # Defines a new accessor on the element and if supplied assigns that attribute a value.
         def add_element(name, value = nil)
           name = name.underscore
 
@@ -117,24 +147,29 @@ module AmazonProductAdvertisingApi
           self.instance_eval("self.#{name}")
         end
         
+        # Add an item to the element's internal collection.
         def << element
           @contained_elements << element
         end
         
+        # Iterate over the element's internal collection.
         def each(&block)
           @contained_elements.each do |element|
             yield element
           end
         end
         
+        # Return the value of the internal collection's element at the given position.
         def [] position
           @contained_elements[position]
         end
         
+        # Return the first element of the internal collection.
         def first
           @contained_elements.first
         end
         
+        # Return the number of elements in the internal collection.
         def size
           @contained_elements.size
         end

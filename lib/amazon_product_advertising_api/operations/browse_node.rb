@@ -1,7 +1,8 @@
-module AmazonProductAdvertisingApi
-  module Operations
-    module BrowseNode
+module AmazonProductAdvertisingApi #:nodoc:
+  module Operations #:nodoc:
+    module BrowseNode #:nodoc:
       
+      # A class to represent the BrowseNodeLookup Operation. See AmazonProductAdvertisingApi::Operations::Base::Request for info relating to all Requests.
       class BrowseNodeLookup < AmazonProductAdvertisingApi::Operations::Base::Request
         
         REQUEST_PARAMETERS = :browse_node_id, :response_group
@@ -9,7 +10,8 @@ module AmazonProductAdvertisingApi
         REQUEST_PARAMETERS.each do |param|
           self.send(:attr_accessor, param)
         end
-
+        
+        # BrowseNodeLookup only requires a browse_node_id to be specified.
         def initialize(browse_node_id, region = :uk)
           super()
 
@@ -18,6 +20,7 @@ module AmazonProductAdvertisingApi
           self.region         = region
         end
         
+        # BrowseNode methods return xml consisting of a BrowseNodes tag with several BrowseNode tags inside.
         def parse
           self.response.add_element("BrowseNodes", AmazonProductAdvertisingApi::Operations::Base::Element.new)
 
@@ -29,7 +32,7 @@ module AmazonProductAdvertisingApi
             queue << [new_element, element.containers]
             
             queue.each do |pair|
-              current_element    = pair[0]
+              current_element  = pair[0]
               current_children = pair[1]
           
               current_children.each do |child|
@@ -51,6 +54,8 @@ module AmazonProductAdvertisingApi
         end
         
         private
+          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
+          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
           def params
             REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
               parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")
