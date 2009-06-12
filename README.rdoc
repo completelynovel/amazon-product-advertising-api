@@ -85,6 +85,13 @@ intended rules.
   limiting.
 
 
+= Obtaining
+The main repository is at github but there is also a rubyforge project.
+
+https://github.com/completelynovel/amazon-product-advertising-api/tree
+http://amazon-pa-api.rubyforge.org/
+
+
 = Credits
 Created by Jon Gilbraith, jon@completelynovel.com, while working with
 CompletelyNovel.
