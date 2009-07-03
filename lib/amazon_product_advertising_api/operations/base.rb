@@ -174,6 +174,18 @@ module AmazonProductAdvertisingApi #:nodoc:
           @contained_elements.size
         end
         
+        def method_missing(method, *args)
+          if AmazonProductAdvertisingApi::Operations::Base::RESPONSE_ELEMENTS.include?(method.to_sym)
+            if AmazonProductAdvertisingApi::Operations::Base::CONTAINER_RESPONSE_ELEMENTS.include?(method.to_sym)
+              self.class.new
+            else
+              nil
+            end
+          else
+            super
+          end
+        end
+        
       end
     
     end
