@@ -88,8 +88,8 @@ intended rules.
 = Obtaining
 The main repository is at github but there is also a rubyforge project.
 
-https://github.com/completelynovel/amazon-product-advertising-api/tree
-http://amazon-pa-api.rubyforge.org/
+- https://github.com/completelynovel/amazon-product-advertising-api/tree
+- http://amazon-pa-api.rubyforge.org/
 
 
 = Credits
