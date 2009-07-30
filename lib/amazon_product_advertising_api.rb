@@ -1,5 +1,10 @@
 require 'net/http'
+require 'cgi'
 require 'hpricot'
+require 'time'
+require 'hmac'
+require 'hmac-sha2'
+require 'base64'
 
 require 'amazon_product_advertising_api/support'
 

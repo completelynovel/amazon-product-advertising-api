@@ -41,13 +41,15 @@ module AmazonProductAdvertisingApi #:nodoc:
         attr_accessor :errors
     
         SERVICE_URLS = {
-            :us => 'http://ecs.amazonaws.com/onca/xml?Service=AWSECommerceService',
-            :uk => 'http://ecs.amazonaws.co.uk/onca/xml?Service=AWSECommerceService',
-            :ca => 'http://ecs.amazonaws.ca/onca/xml?Service=AWSECommerceService',
-            :de => 'http://ecs.amazonaws.de/onca/xml?Service=AWSECommerceService',
-            :jp => 'http://ecs.amazonaws.jp/onca/xml?Service=AWSECommerceService',
-            :fr => 'http://ecs.amazonaws.fr/onca/xml?Service=AWSECommerceService'
+            :us => 'http://ecs.amazonaws.com/onca/xml',
+            :uk => 'http://ecs.amazonaws.co.uk/onca/xml',
+            :ca => 'http://ecs.amazonaws.ca/onca/xml',
+            :de => 'http://ecs.amazonaws.de/onca/xml',
+            :jp => 'http://ecs.amazonaws.jp/onca/xml',
+            :fr => 'http://ecs.amazonaws.fr/onca/xml'
         }
+        
+        API_VERSION = "2009-01-06"
     
         def initialize
           self.response = AmazonProductAdvertisingApi::Operations::Base::Element.new
@@ -57,16 +59,31 @@ module AmazonProductAdvertisingApi #:nodoc:
         # This takes care of building request, performing it, storing the results, checking for errors then parsing the data (if the request was valid).
         def query_amazon(params)
           request_params = {}
-          request_params["AWSAccessKeyId"] = AmazonProductAdvertisingApi::Base.access_key_id
-          request_params["Operation"]      = self.operation
-          request_params["AssociateTag"]   = AmazonProductAdvertisingApi::Base.associate_ids.send(self.region) unless AmazonProductAdvertisingApi::Base.associate_ids.send(self.region).nil?
+          request_params["Service"]          = "AWSECommerceService"
+          request_params["SignatureVersion"] = 2
+          request_params["SignatureMethod"]  = "HmacSHA256"
+          request_params["Timestamp"]        = Time.now.gmtime.iso8601
+          request_params["AWSAccessKeyId"]   = AmazonProductAdvertisingApi::Base.access_key_id
+          request_params["Operation"]        = self.operation
+          request_params["AssociateTag"]     = AmazonProductAdvertisingApi::Base.associate_ids.send(self.region) unless AmazonProductAdvertisingApi::Base.associate_ids.send(self.region).nil?
+          request_params["Version"]          = API_VERSION
           request_params.merge!(params)
+
+          # Process all params - make sure they're all strings, camelize and escape (where appropriate)
+          request_params = request_params.collect { |var, val| [var.to_s.camelize, val.to_s] }
+          request_params = request_params.collect { |var, val| [var, CGI::escape(val).gsub('+', '%20')] }
           
-          self.request_uri = "#{SERVICE_URLS[self.region]}&#{request_params.collect { |var, val| var.to_s.camelize + "=" + val.to_s }.join("&")}"
-          self.request_uri = URI.parse(URI.escape(self.request_uri))
-      
+          # Assemble into a full request string
+          unsigned_uri = URI.parse("#{SERVICE_URLS[self.region]}?#{request_params.sort { |a, b| a[0] <=> b[0] }.collect { |var, val| var + "=" + val }.join("&")}")
+
+          # Generate hmac
+          hmac = HMAC::SHA256.new(AmazonProductAdvertisingApi::Base.secret_access_key)
+          hmac.update("GET\n#{unsigned_uri.host}\n#{unsigned_uri.path}\n#{unsigned_uri.query}")
+
+          self.request_uri = URI.parse("#{unsigned_uri}&Signature=#{Base64.encode64(hmac.digest).chomp}")
+
           result = Net::HTTP::get_response(self.request_uri)
-          raise("Error connecting to Amazon") if !result.kind_of?(Net::HTTPSuccess)
+          raise("Error connecting to Amazon - #{result.to_s}") if !result.kind_of?(Net::HTTPSuccess)
       
           # Store away the raw data for debugging or if more direct access is required
           self.raw_data     = result.body

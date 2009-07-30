@@ -77,7 +77,6 @@ intended rules.
 = TODO
 - Implement the rest of the Operations (Cart*, Customer*, Help, List*, Seller*,
   Tag*, Transaction* and Vehicle*).
-- Implement HMAC before the authentication requirement kicks in in August 2009.
 - Implement batch and multiple operation requests, abstracted away from the
   user within the dsl.
 - Some sort of internal caching mechanism.
