@@ -80,7 +80,7 @@ module AmazonProductAdvertisingApi #:nodoc:
           hmac = HMAC::SHA256.new(AmazonProductAdvertisingApi::Base.secret_access_key)
           hmac.update("GET\n#{unsigned_uri.host}\n#{unsigned_uri.path}\n#{unsigned_uri.query}")
 
-          self.request_uri = URI.parse("#{unsigned_uri}&Signature=#{Base64.encode64(hmac.digest).chomp}")
+          self.request_uri = URI.parse("#{unsigned_uri}&Signature=#{CGI::escape(Base64.encode64(hmac.digest).chomp)}")
 
           result = Net::HTTP::get_response(self.request_uri)
           raise("Error connecting to Amazon - #{result.to_s}") if !result.kind_of?(Net::HTTPSuccess)
