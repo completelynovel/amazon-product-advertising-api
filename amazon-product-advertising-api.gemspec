@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{amazon-product-advertising-api}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jon Gilbraith"]
-  s.date = %q{2009-07-06}
+  s.date = %q{2009-07-30}
   s.description = %q{A nice rubyish interface to the Amazon Product Advertising API, formerly known as the Associates Web Service and before that the Amazon E-Commerce Service.}
   s.email = %q{jon@completelynovel.com}
   s.extra_rdoc_files = [
@@ -40,8 +40,14 @@ Gem::Specification.new do |s|
     s.specification_version = 2
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<hpricot>, [">= 0"])
+      s.add_runtime_dependency(%q<ruby-hmac>, [">= 0"])
     else
+      s.add_dependency(%q<hpricot>, [">= 0"])
+      s.add_dependency(%q<ruby-hmac>, [">= 0"])
     end
   else
+    s.add_dependency(%q<hpricot>, [">= 0"])
+    s.add_dependency(%q<ruby-hmac>, [">= 0"])
   end
 end
