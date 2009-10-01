@@ -49,7 +49,7 @@ module AmazonProductAdvertisingApi #:nodoc:
             :fr => 'http://ecs.amazonaws.fr/onca/xml'
         }
         
-        API_VERSION = "2009-01-06"
+        API_VERSION = "2009-03-31"
     
         def initialize
           self.response = AmazonProductAdvertisingApi::Operations::Base::Element.new
@@ -132,19 +132,19 @@ module AmazonProductAdvertisingApi #:nodoc:
       # They represent the 'response element' entity within the API docs.
       #
       # As well as various having attributes it can also contain a collection and behave like an array.
-      #
-      # I think I might have got a bit confused with all this, will come back to this shortly to check.
-      class Element
+      class Element < Array
         
-        include Enumerable
+        attr_reader :attributes
         
         def initialize
-          @contained_elements = []
+          @attributes = {}
         end
         
         # Defines a new accessor on the element and if supplied assigns that attribute a value.
         def add_element(name, value = nil)
           name = name.underscore
+
+          @attributes[name.to_s] = value
 
           self.instance_eval %{
             def self.#{name}
@@ -164,42 +164,13 @@ module AmazonProductAdvertisingApi #:nodoc:
           self.instance_eval("self.#{name}")
         end
         
-        # Add an item to the element's internal collection.
-        def << element
-          @contained_elements << element
-        end
-        
-        # Iterate over the element's internal collection.
-        def each(&block)
-          @contained_elements.each do |element|
-            yield element
-          end
-        end
-        
-        # Return the value of the internal collection's element at the given position.
-        def [] position
-          @contained_elements[position]
-        end
-        
-        # Return the first element of the internal collection.
-        def first
-          @contained_elements.first
-        end
-        
-        # Return the number of elements in the internal collection.
-        def size
-          @contained_elements.size
-        end
-        
         def method_missing(method, *args)
-          if AmazonProductAdvertisingApi::Operations::Base::RESPONSE_ELEMENTS.include?(method.to_sym)
-            if AmazonProductAdvertisingApi::Operations::Base::CONTAINER_RESPONSE_ELEMENTS.include?(method.to_sym)
-              self.class.new
-            else
-              nil
-            end
+          return super unless RESPONSE_ELEMENTS.include?(method.to_sym)
+
+          if CONTAINER_RESPONSE_ELEMENTS.include?(method.to_sym)
+            self.class.new
           else
-            super
+            nil
           end
         end
         

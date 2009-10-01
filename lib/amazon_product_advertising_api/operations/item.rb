@@ -38,6 +38,17 @@ module AmazonProductAdvertisingApi #:nodoc:
           end
         end
         
+        protected
+
+          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
+          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
+          def params
+            self.class.const_get("REQUEST_PARAMETERS").inject({}) do |parameters, parameter|
+              parameters[parameter] = instance_variable_get("@#{parameter}") unless instance_variable_get("@#{parameter}").nil?
+              parameters
+            end
+          end        
+      
       end
       
       # A class to represent the ItemSearch Operation. See AmazonProductAdvertisingApi::Operations::Base::Request for info relating to all Requests.
@@ -65,18 +76,7 @@ module AmazonProductAdvertisingApi #:nodoc:
           self.search_index = search_index
           self.operation    = "ItemSearch"
           self.region       = region
-        end
-      
-        private
-          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
-          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
-          def params
-            REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
-              parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")
-              parameters
-            end
-          end
-      
+        end      
       end
       
       # A class to represent the ItemLookup Operation. See AmazonProductAdvertisingApi::Operations::Base::Request for info relating to all Requests.
@@ -95,23 +95,12 @@ module AmazonProductAdvertisingApi #:nodoc:
         
         # ItemLookup only requires an item id (ASIN) to be specified.
         def initialize(item_id, region = :uk)
-          super()
+          super
           
           self.item_id   = item_id
           self.operation = "ItemLookup"
           self.region    = region
-        end
-      
-        private
-          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
-          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
-          def params
-            REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
-              parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")
-              parameters
-            end
-          end
-          
+        end      
       end
       
       # A class to represent the SimilarityLookup Operation. See AmazonProductAdvertisingApi::Operations::Base::Request for info relating to all Requests.
@@ -137,17 +126,6 @@ module AmazonProductAdvertisingApi #:nodoc:
           self.operation = "SimilarityLookup"
           self.region    = region
         end
-      
-        private
-          # This simply looks at the defined parameters and creates a hash of the ones that have values assigned.
-          # Need to work out a way of doing this so I don't need to keep defining exactly the same method in each class.
-          def params
-            REQUEST_PARAMETERS.inject({}) do |parameters, parameter|
-              parameters[parameter] = eval("self.#{parameter}") unless eval("self.#{parameter}.nil?")
-              parameters
-            end
-          end
-          
       end
       
     end

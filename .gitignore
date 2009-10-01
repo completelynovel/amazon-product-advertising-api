@@ -1,3 +1,4 @@
 .DS_Store
 ._*
 rdoc
+test/test_local.rb
