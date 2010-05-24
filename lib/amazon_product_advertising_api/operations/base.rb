@@ -45,7 +45,7 @@ module AmazonProductAdvertisingApi #:nodoc:
             :uk => 'http://ecs.amazonaws.co.uk/onca/xml',
             :ca => 'http://ecs.amazonaws.ca/onca/xml',
             :de => 'http://ecs.amazonaws.de/onca/xml',
-            :jp => 'http://ecs.amazonaws.jp/onca/xml',
+            :jp => 'http://webservices.amazon.co.jp/onca/xml',
             :fr => 'http://ecs.amazonaws.fr/onca/xml'
         }
         
